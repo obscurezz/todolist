@@ -1,12 +1,36 @@
+version: "3.10"
+
 services:
-  db:
-    image: postgres:latest
+  front:
+    container_name: todolist_nginx_front
+    image: pass
+  api:
+    container_name: todolist_django_api
+    build:
+      pass
+  migrations:
+    build:
+      pass
+  postgres:
+    container_name: todolist_pg_db
+    image: postgres:15.1-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - todolist_pgdata:/var/lib/postgresql/data
     restart: always
     expose:
       - "9876"
     ports:
       - "9876:5432"
+    healthcheck:
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  todolist_pgdata:
+    driver: local
