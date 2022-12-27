@@ -15,9 +15,11 @@ jobs:
       - name: docker login
         run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
       - name: docker build image
-        run: docker build -t obscurezz/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+      - name: docker tag image
+        run: docker tag ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID docker.io/obscurezz/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
   push:
     runs-on: ubuntu-latest
     steps:
       - name: docker push image
-        run: docker push obscurezz/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+        run: docker push ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
