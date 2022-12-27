@@ -14,8 +14,8 @@ jobs:
         uses: actions/checkout@v2
       - name: docker login
         run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
-      - name: docker compose build image
-        run: docker compose build obscurezz/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+      - name: docker build image
+        run: docker build -t obscurezz/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
   push:
     runs-on: ubuntu-latest
     steps:
