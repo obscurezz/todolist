@@ -9,7 +9,7 @@ jobs:
       - name: docker login
         run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
       - name: docker compose build image
-        run: docker compose build -t ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+        run: docker compose build ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
   push:
     runs-on: ubuntu-latest
     steps:
