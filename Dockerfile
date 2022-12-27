@@ -9,15 +9,12 @@ RUN apt-get update && apt-get -y install libpq-dev gcc
 RUN adduser --disabled-password django
 WORKDIR /home/django
 
-#i have no f**cking idea why it doesn't work with poetry and works perfectly with pip
-#RUN pip install poetry
-#COPY pyproject.toml pyproject.toml
-#COPY poetry.lock poetry.lock
-#RUN poetry install --no-root
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install poetry
+COPY pyproject.toml pyproject.toml
+COPY poetry.lock poetry.lock
+RUN poetry config virtualenvs.create false && poetry install --no-dev --no-ansi --no-root
 
 ADD skypro skypro
 
+EXPOSE 8000
 CMD gunicorn --pythonpath /home/django/skypro skypro.wsgi -w 2 --threads 2 -b 0.0.0.0:8000

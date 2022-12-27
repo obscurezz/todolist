@@ -1,17 +1,60 @@
-version: "3.10"
+version: "3.8"
+
+networks:
+  todolist-network:
+    driver: bridge
 
 services:
   front:
+    networks:
+      - todolist-network
     container_name: todolist_nginx_front
-    image: pass
+    image: sermalenk/skypro-front:lesson-34
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+      - "3000:3000"
   api:
-    container_name: todolist_django_api
+    networks:
+      - todolist-network
+    container_name: api
+    restart: always
     build:
-      pass
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+    env_file:
+      - skypro/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
   migrations:
+    networks:
+      - todolist-network
     build:
-      pass
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["python", "skypro/manage.py", "migrate", "--noinput"]
   postgres:
+    networks:
+      - todolist-network
     container_name: todolist_pg_db
     image: postgres:15.1-alpine
     environment:
@@ -22,11 +65,11 @@ services:
       - todolist_pgdata:/var/lib/postgresql/data
     restart: always
     expose:
-      - "9876"
+      - "5432"
     ports:
-      - "9876:5432"
+      - "5432:5432"
     healthcheck:
-      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
+      test: pg_isready --username=${POSTGRES_USER} --dbname=${POSTGRES_DB}
       interval: 5s
       timeout: 5s
       retries: 3
