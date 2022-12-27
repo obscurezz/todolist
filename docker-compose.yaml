@@ -27,8 +27,8 @@ services:
       - postgres
     environment:
       DATABASE_HOST: postgres
-    env_file:
-      - skypro/.env
+#    env_file:
+#      - skypro/.env
     depends_on:
       postgres:
         condition: service_healthy
