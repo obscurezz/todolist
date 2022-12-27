@@ -1,0 +1,17 @@
+name: build/deploy workflow
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+      - name: docker login
+        run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
+      - name: docker compose build image
+        run: docker compose build -t ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: docker push image
+        run: docker push ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
