@@ -48,4 +48,5 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd todolist_deploy
+            echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker-compose up -d
