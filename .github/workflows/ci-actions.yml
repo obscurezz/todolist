@@ -5,7 +5,6 @@ env:
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-  TAG: $GITHUB_REF_NAME-$GITHUB_RUN_ID
   DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
 
 jobs:

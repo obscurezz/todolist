@@ -11,7 +11,7 @@ services:
       - todolist-network
     container_name: api
     restart: always
-    image: ${DOCKER_HUB_USER}/todolist-skypro:${TAG}
+    image: ${DOCKER_HUB_USER}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     links:
       - postgres
     environment:
@@ -29,7 +29,7 @@ services:
   migrations:
     networks:
       - todolist-network
-    image: ${DOCKER_HUB_USER}/todolist-skypro:${TAG}
+    image: ${DOCKER_HUB_USER}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     links:
       - postgres
     environment:
