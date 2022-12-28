@@ -5,8 +5,11 @@ env:
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+  TAG: $GITHUB_REF_NAME-$GITHUB_RUN_ID
+  DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
 
 jobs:
+
   build-n-push:
     runs-on: ubuntu-latest
     steps:
@@ -16,7 +19,34 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
       - name: docker build image
         run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
-#      - name: docker tag image
-#        run: docker tag ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID docker.io/obscurezz/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
       - name: docker push image
         run: docker push ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-n-push
+    steps:
+      - name: clone code
+        uses: actions/checkout@v2
+      - name: create deployment
+        run: |
+          mkdir -p todolist_deploy
+          cat deploy/docker-compose-deploy.yaml | envsubst > todolist_deploy/docker-compose.yaml
+      - name: scp files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_NAME }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "todolist_deploy/docker-compose.yaml"
+          target: "todolist_deploy"
+          strip_components: 1
+      - name: deploy application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_NAME }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd todolist_deploy
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker-compose up -d
