@@ -27,8 +27,8 @@ services:
       - postgres
     environment:
       DATABASE_HOST: postgres
-#    env_file:
-#      - skypro/.env
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,6 +48,8 @@ services:
       - postgres
     environment:
       DATABASE_HOST: postgres
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
     depends_on:
       postgres:
         condition: service_healthy

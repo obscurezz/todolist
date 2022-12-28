@@ -6,6 +6,9 @@ env:
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+  DEBUG: on
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 jobs:
 
@@ -49,4 +52,4 @@ jobs:
           script: |
             cd todolist_deploy
             echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker-compose up -d
+            docker-compose up -d
