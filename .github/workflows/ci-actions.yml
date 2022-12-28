@@ -6,7 +6,6 @@ env:
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
-  DEBUG: on
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
