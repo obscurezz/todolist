@@ -1,13 +1,7 @@
 version: "3.8"
 
-networks:
-  todolist-network:
-    driver: bridge
-
 services:
   front:
-    networks:
-      - todolist-network
     container_name: todolist_nginx_front
     image: sermalenk/skypro-front:lesson-34
     depends_on:
@@ -15,8 +9,6 @@ services:
     ports:
       - "80:80"
   api:
-    networks:
-      - todolist-network
     container_name: api
     restart: always
     build:
@@ -33,11 +25,9 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
   migrations:
-    networks:
-      - todolist-network
     build:
       context: .
       dockerfile: Dockerfile
@@ -52,8 +42,6 @@ services:
         condition: service_healthy
     entrypoint: ["python", "skypro/manage.py", "migrate", "--noinput"]
   postgres:
-    networks:
-      - todolist-network
     container_name: todolist_pg_db
     image: postgres:15.1-alpine
     environment:
@@ -63,8 +51,8 @@ services:
     volumes:
       - todolist_pgdata:/var/lib/postgresql/data
     restart: always
-    expose:
-      - "5432"
+    ports:
+      - "5432:5432"
     healthcheck:
       test: pg_isready --username=${POSTGRES_USER} --dbname=${POSTGRES_DB}
       interval: 5s

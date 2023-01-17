@@ -1,0 +1,6 @@
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres_pass_123
+POSTGRES_DB=postgres
+SECRET_KEY=42otOEHfzPjwanpHneRdFySemWBc5pCE
+DEBUG=on
+DATABASE_URL=psql://postgres:postgres_pass_123@postgres:5432/postgres

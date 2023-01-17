@@ -15,23 +15,26 @@ class PasswordField(serializers.CharField):
         self.validators.append(validate_password)
 
 
-class CreateUserSerializer(serializers.ModelSerializer):
-    password = PasswordField
-    password_repeat = PasswordField
-
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'password_repeat']
+class CreateUserSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150)
+    first_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=150)
+    email = serializers.EmailField(max_length=254)
+    password = PasswordField(min_length=8)
+    password_repeat = PasswordField(min_length=8)
 
     def validate(self, attrs: dict) -> dict:
-        if attrs['password'] != attrs['password_repeat']:
-            raise ValidationError("Passwords don't match")
-        return attrs
+        if attrs['password'] == attrs['password_repeat']:
+            return attrs
+        raise ValidationError("Passwords don't match")
 
     def create(self, validated_data: dict) -> User:
         del validated_data['password_repeat']
         validated_data['password'] = make_password(validated_data['password'])
-        return super().create(validated_data)
+        return User.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        pass
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -49,7 +52,7 @@ class LoginSerializer(serializers.ModelSerializer):
         return user
 
 
-class ChangePasswordSerializer(serializers.Serializer):
+class UpdatePasswordSerializer(serializers.Serializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     old_password = PasswordField(required=True)
     new_password = PasswordField(required=True)
@@ -70,7 +73,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         return instance
 
 
-class AccountSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']

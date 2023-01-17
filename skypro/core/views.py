@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User
-from .serializers import (CreateUserSerializer, LoginSerializer, ChangePasswordSerializer, AccountSerializer)
+from .serializers import (CreateUserSerializer, LoginSerializer, UpdatePasswordSerializer, ProfileSerializer)
 from rest_framework import generics, status
 
 from django.contrib.auth import login, logout
@@ -25,16 +25,16 @@ class LoginView(generics.GenericAPIView):
 
 
 class ChangePasswordView(generics.UpdateAPIView):
-    serializer_class = ChangePasswordSerializer
+    serializer_class = UpdatePasswordSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
 
-class AccountView(generics.RetrieveUpdateDestroyAPIView):
+class ProfileView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = AccountSerializer
+    serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
@@ -49,7 +49,6 @@ class AccountView(generics.RetrieveUpdateDestroyAPIView):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @method_decorator(ensure_csrf_cookie)
     def delete(self, request, *args, **kwargs):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
