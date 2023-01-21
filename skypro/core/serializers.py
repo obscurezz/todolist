@@ -34,7 +34,7 @@ class CreateUserSerializer(serializers.Serializer):
         return User.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        pass
+        raise NotImplementedError
 
 
 class LoginSerializer(serializers.ModelSerializer):
