@@ -44,8 +44,8 @@ class Goal(BaseModelMixin):
 
     category = models.ForeignKey(GoalCategory, verbose_name="Категория", on_delete=models.PROTECT, db_column="category")
     title = models.CharField(verbose_name="Название", max_length=255, unique=True)
-    description = models.CharField(verbose_name="Описание", max_length=1000)
-    due_date = models.DateField(verbose_name="Дата выполнения")
+    description = models.CharField(verbose_name="Описание", max_length=1000, null=True, blank=True)
+    due_date = models.DateField(verbose_name="Дата выполнения", null=True, blank=True)
     status = models.PositiveSmallIntegerField(verbose_name="Статус", choices=Status.choices, default=Status.to_do)
     priority = models.PositiveSmallIntegerField(verbose_name="Приоритет", choices=Priority.choices,
                                                 default=Priority.medium)
