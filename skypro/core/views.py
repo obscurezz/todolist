@@ -1,5 +1,3 @@
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -14,14 +12,18 @@ class CreateAccountView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
 
 
-class LoginView(generics.GenericAPIView):
+class LoginView(generics.CreateAPIView):
     serializer_class = LoginSerializer
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        login(request=request, user=serializer.save())
+        self.perform_create(serializer)
         return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        login(request=self.request, user=user)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -40,7 +42,6 @@ class ProfileView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return self.request.user
 
-    @method_decorator(ensure_csrf_cookie)
     def partial_update(self, request, *args, **kwargs):
         account = self.get_object()
         serializer = self.get_serializer(account, data=request.data, partial=True)

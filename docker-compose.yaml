@@ -3,7 +3,7 @@ version: "3.8"
 services:
   front:
     container_name: todolist_nginx_front
-    image: sermalenk/skypro-front:lesson-34
+    image: sermalenk/skypro-front:lesson-38
     depends_on:
       - api
     ports:

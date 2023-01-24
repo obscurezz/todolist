@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'core',
     'goals',
 ]
@@ -131,4 +132,12 @@ STATIC_ROOT = BASE_DIR.joinpath('static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+}
+
 AUTH_USER_MODEL = 'core.User'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
