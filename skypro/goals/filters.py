@@ -2,7 +2,7 @@ import django_filters
 from django.db import models
 from django_filters import rest_framework
 
-from goals.models import Goal, GoalComment
+from goals.models import Goal, GoalComment, GoalCategory
 
 
 class GoalDateFilter(rest_framework.FilterSet):
@@ -25,4 +25,12 @@ class CommentGoalFilter(rest_framework.FilterSet):
         model = GoalComment
         fields = {
             "goal": ("exact",),
+        }
+
+
+class CategoryBoardFilter(rest_framework.FilterSet):
+    class Meta:
+        model = GoalCategory
+        fields = {
+            'board': ('exact',)
         }

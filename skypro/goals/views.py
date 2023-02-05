@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, filters
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 
-from goals.filters import GoalDateFilter, CommentGoalFilter
+from goals.filters import GoalDateFilter, CommentGoalFilter, CategoryBoardFilter
 from goals.models import Goal, GoalCategory, GoalComment, Board
 from goals.permissions import BoardPermissions, CategoryPermissions, GoalPermissions, \
     CommentPermissions
@@ -24,11 +24,13 @@ class GoalCategoryListView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCategorySerializer
     filter_backends = [
+        DjangoFilterBackend,
         filters.OrderingFilter,
         filters.SearchFilter,
     ]
+    filterset_class = CategoryBoardFilter
     ordering_fields = ["title", "created"]
-    ordering = ["title"]
+    ordering = ["-created"]
     search_fields = ["title"]
 
     def get_queryset(self):
