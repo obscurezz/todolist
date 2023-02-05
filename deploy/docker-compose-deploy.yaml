@@ -26,6 +26,7 @@ services:
         condition: service_completed_successfully
     expose:
       - "8000"
+    command: bash -c "gunicorn --pythonpath /home/django/skypro skypro.wsgi -w 2 --threads 2 -b 0.0.0.0:8000"
 # migrations
   migrations:
     networks:
@@ -88,6 +89,7 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
+    command: python skypro/manage.py runbot
 
 volumes:
 # pgdata for postgres
