@@ -26,20 +26,20 @@ services:
     expose:
       - "8000"
 # migrations
-  migrations:
-    networks:
-      - todolist-network
-    image: ${DOCKER_HUB_USER}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-    links:
-      - postgres
-    environment:
-      DATABASE_HOST: postgres
-      SECRET_KEY: ${SECRET_KEY}
-      DATABASE_URL: ${DATABASE_URL}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    entrypoint: ["python", "skypro/manage.py", "migrate", "--noinput"]
+#  migrations:
+#    networks:
+#      - todolist-network
+#    image: ${DOCKER_HUB_USER}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+#    links:
+#      - postgres
+#    environment:
+#      DATABASE_HOST: postgres
+#      SECRET_KEY: ${SECRET_KEY}
+#      DATABASE_URL: ${DATABASE_URL}
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    entrypoint: ["python", "skypro/manage.py", "migrate", "--noinput"]
 # postgres
   postgres:
     networks:
@@ -70,6 +70,19 @@ services:
       - api
     ports:
       - "80:80"
+
+  bot:
+    networks:
+      - todolist-network
+    image: ${DOCKER_HUB_USER}/todolist-skypro-tg-bot:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    restart: on-failure
+    environment:
+      TG_TOKEN: ${TG_TOKEN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api:
+        condition: service_healthy
 
 volumes:
 # pgdata for postgres

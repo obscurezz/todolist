@@ -8,6 +8,7 @@ env:
   DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  TG_TOKEN: ${{ secrets.TG_TOKEN }}
 
 jobs:
 
@@ -18,10 +19,14 @@ jobs:
         uses: actions/checkout@v2
       - name: docker login
         run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
-      - name: docker build image
+      - name: docker build api image
         run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
-      - name: docker push image
+      - name: docker build bot image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro-tg-bot:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+      - name: docker push api image
         run: docker push ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+      - name: docker push bot image
+        run: docker push ${{ secrets.DOCKER_HUB_USER }}/todolist-skypro-tg-bot:$GITHUB_REF_NAME-$GITHUB_RUN_ID
 
   deploy:
     runs-on: ubuntu-latest
