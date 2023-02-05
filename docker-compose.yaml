@@ -23,24 +23,24 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-#      migrations:
-#        condition: service_completed_successfully
+      migrations:
+        condition: service_completed_successfully
     ports:
       - "8000:8000"
-#  migrations:
-#    build:
-#      context: .
-#      target: api-image
-#    links:
-#      - postgres
-#    environment:
-#      DATABASE_HOST: postgres
-#      SECRET_KEY: ${SECRET_KEY}
-#      DATABASE_URL: ${DATABASE_URL}
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    entrypoint: ["python", "skypro/manage.py", "migrate", "--noinput"]
+  migrations:
+    build:
+      context: .
+      target: api-image
+    links:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["python", "skypro/manage.py", "migrate", "--noinput"]
   postgres:
     container_name: todolist_pg_db
     image: postgres:15.1-alpine
@@ -70,6 +70,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
 
 volumes:
   todolist_pgdata:

@@ -19,7 +19,7 @@ RUN poetry config virtualenvs.create false && poetry install --no-dev --no-ansi 
 ADD skypro skypro
 COPY entrypoint.sh .
 
-ENTRYPOINT ["bash", "entrypoint.sh"]
+#ENTRYPOINT ["bash", "entrypoint.sh"]
 
 FROM base-image as api-image
 CMD gunicorn --pythonpath /home/django/skypro skypro.wsgi -w 2 --threads 2 -b 0.0.0.0:8000
