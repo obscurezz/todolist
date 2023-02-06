@@ -9,6 +9,8 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   TG_TOKEN: ${{ secrets.TG_TOKEN }}
+  VK_OAUTH2_KEY: ${{ secrets.VK_OAUTH2_KEY }}
+  VK_OAUTH2_SECRET: ${{ secrets.VK_OAUTH2_SECRET }}
 
 jobs:
 

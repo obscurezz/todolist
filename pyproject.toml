@@ -16,6 +16,7 @@ djangorestframework = "^3.14.0"
 django-filter = "^22.1"
 requests = "^2.28.2"
 pydantic = "^1.10.4"
+social-auth-app-django = "^5.0.0"
 
 
 [build-system]
