@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -13,8 +14,8 @@ class TgUserSerializer(serializers.ModelSerializer):
         read_only_fields = ('tg_chat_id', 'tg_user_name', 'user')
 
     def validate(self, attrs: dict):
-        verification_code = attrs.get('verification_code')
-        tg_user = TgUser.objects.filter(verification_code=verification_code).first()
+        verification_code: str = attrs.get('verification_code')
+        tg_user: QuerySet = TgUser.objects.filter(verification_code=verification_code).first()
 
         if not tg_user:
             raise ValidationError('Invalid verification code')

@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, filters
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
@@ -33,7 +33,7 @@ class GoalCategoryListView(ListAPIView):
     ordering = ["-created"]
     search_fields = ["title"]
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
 
 
@@ -42,7 +42,7 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalCategorySerializer
     permission_classes = [CategoryPermissions]
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
 
     def perform_destroy(self, instance):
@@ -72,8 +72,9 @@ class GoalListView(ListAPIView):
     ordering = ["title"]
     search_fields = ["title", "description"]
 
-    def get_queryset(self):
-        category_set = GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
+    def get_queryset(self) -> QuerySet:
+        category_set: QuerySet = GoalCategory.objects.filter(board__participants__user=self.request.user,
+                                                             is_deleted=False)
 
         return Goal.objects.filter(
             Q(category__in=category_set) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False))
@@ -84,8 +85,9 @@ class GoalView(RetrieveUpdateDestroyAPIView):
     permission_classes = [GoalPermissions]
     serializer_class = GoalSerializer
 
-    def get_queryset(self):
-        category_set = GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
+    def get_queryset(self) -> QuerySet:
+        category_set: QuerySet = GoalCategory.objects.filter(board__participants__user=self.request.user,
+                                                             is_deleted=False)
 
         return Goal.objects.filter(
             Q(category__in=category_set) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False))
@@ -116,8 +118,9 @@ class GoalCommentListView(ListAPIView):
     ordering = ["-created"]
     search_fields = ["goal"]
 
-    def get_queryset(self):
-        category_set = GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
+    def get_queryset(self) -> QuerySet:
+        category_set: QuerySet = GoalCategory.objects.filter(board__participants__user=self.request.user,
+                                                             is_deleted=False)
 
         return GoalComment.objects.filter(goal__category__in=category_set)
 
@@ -127,8 +130,9 @@ class GoalCommentView(RetrieveUpdateDestroyAPIView):
     permission_classes = [CommentPermissions]
     serializer_class = GoalCommentSerializer
 
-    def get_queryset(self):
-        category_set = GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
+    def get_queryset(self) -> QuerySet:
+        category_set: QuerySet = GoalCategory.objects.filter(board__participants__user=self.request.user,
+                                                             is_deleted=False)
 
         return GoalComment.objects.filter(goal__category__in=category_set)
 
@@ -144,7 +148,7 @@ class BoardView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, BoardPermissions]
     serializer_class = BoardSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
 
     def perform_destroy(self, instance: Board):
@@ -166,5 +170,5 @@ class BoardListView(ListAPIView):
     ]
     ordering = ['-title']
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return Board.objects.filter(participants__user=self.request.user, is_deleted=False)

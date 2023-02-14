@@ -9,37 +9,36 @@ class StorageData(BaseModel):
 
 
 class BotDataStorage(Storage):
-    """Класс для работы с данными бота"""
+    """Working with bot data"""
     def __init__(self):
         self.data: dict[int, StorageData] = {}
 
     def _resolve_chat(self, chat_id: int):
-        """Защищенный метод проверяющий, если ли в памяти чат с указанным id,
-        если нет создается новая запись"""
+        """Checks if there is chat_id in storage. If not - creates one."""
         if chat_id not in self.data:
             self.data[chat_id] = StorageData()
         return self.data[chat_id]
 
     def get_state(self, chat_id: int) -> StorageData | None:
-        """Метод получения состояния чата"""
+        """Checks chat's state"""
         return self._resolve_chat(chat_id).state
 
     def get_data(self, chat_id: int) -> dict:
-        """Метод получения id чата из памяти при создании новой цели"""
+        """Gets chat_id from storage"""
         return self._resolve_chat(chat_id).data
 
     def set_state(self, chat_id, state: Enum) -> None:
-        """Метод для установки состояния чата"""
+        """Sets chat's state"""
         self._resolve_chat(chat_id).state = state
 
     def set_data(self, chat_id: int, data: dict) -> None:
-        """Метод для отправки в память данных chat_id и новой цели"""
+        """Sends chat_id and new goal to storage"""
         self._resolve_chat(chat_id).data = data
 
     def reset(self, chat_id: int) -> bool:
-        """Метод для очистки данных о чате из памяти"""
+        """Resets chat's data in storage"""
         return bool(self.data.pop(chat_id, None))
 
     def update_data(self, chat_id: int, **kwargs) -> None:
-        """Метод для обновления данных уже существующего чата"""
+        """Updates exists chats data"""
         self._resolve_chat(chat_id).data.update(**kwargs)

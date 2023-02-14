@@ -4,14 +4,14 @@ from goals.models import Board, BoardParticipant, GoalCategory, Goal, GoalCommen
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj) -> bool:
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.user == request.user.id
 
 
 class BoardPermissions(permissions.IsAuthenticated):
-    def has_object_permission(self, request, view, obj: Board):
+    def has_object_permission(self, request, view, obj: Board) -> bool:
         check: dict = {'user': request.user, 'board': obj}
         if request.method not in permissions.SAFE_METHODS:
             check['role'] = BoardParticipant.Role.owner
@@ -20,7 +20,7 @@ class BoardPermissions(permissions.IsAuthenticated):
 
 
 class CategoryPermissions(permissions.IsAuthenticated):
-    def has_object_permission(self, request, view, obj: GoalCategory):
+    def has_object_permission(self, request, view, obj: GoalCategory) -> bool:
         check: dict = {'user': request.user, 'board': obj.board}
         if request.method not in permissions.SAFE_METHODS:
             check['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
@@ -29,7 +29,7 @@ class CategoryPermissions(permissions.IsAuthenticated):
 
 
 class GoalPermissions(permissions.IsAuthenticated):
-    def has_object_permission(self, request, view, obj: Goal):
+    def has_object_permission(self, request, view, obj: Goal) -> bool:
         check: dict = {'user': request.user, 'board': obj.category.board}
         if request.method not in permissions.SAFE_METHODS:
             check['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
@@ -38,5 +38,5 @@ class GoalPermissions(permissions.IsAuthenticated):
 
 
 class CommentPermissions(permissions.IsAuthenticated):
-    def has_object_permission(self, request, view, obj: GoalComment):
+    def has_object_permission(self, request, view, obj: GoalComment) -> bool:
         return any((request.method in permissions.SAFE_METHODS, obj.user == request.user.id))

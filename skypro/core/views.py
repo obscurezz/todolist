@@ -15,14 +15,14 @@ class CreateAccountView(generics.CreateAPIView):
 class LoginView(generics.CreateAPIView):
     serializer_class = LoginSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def create(self, request, *args, **kwargs) -> Response:
+        serializer: LoginSerializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        user = serializer.save()
+    def perform_create(self, serializer) -> None:
+        user: User = serializer.save()
         login(request=self.request, user=user)
 
 
@@ -42,7 +42,7 @@ class ProfileView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return self.request.user
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs) -> Response:
         account = self.get_object()
         serializer = self.get_serializer(account, data=request.data, partial=True)
         if serializer.is_valid():
@@ -50,6 +50,6 @@ class ProfileView(generics.RetrieveUpdateDestroyAPIView):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs) -> Response:
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
